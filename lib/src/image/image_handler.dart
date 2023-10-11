@@ -260,13 +260,7 @@ class ImageHandler {
   Widget _loadingBuilder(
       BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
     if (_isLoaded) {
-      if (_wasSynchronouslyLoaded) {
-        return _image(context, child);
-      }
-      return _stack(
-        _image(context, child),
-        _progressIndicator(context, null),
-      );
+      return _image(context, child);
     }
 
     if (placeholderFadeInDuration != Duration.zero) {
