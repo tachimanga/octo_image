@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+import '../../octo_image.dart';
 import '../octo_set.dart';
 import 'image_handler.dart';
 
@@ -143,6 +144,9 @@ class OctoImage extends StatefulWidget {
   /// placeholder (false), when the image provider changes.
   final bool gaplessPlayback;
 
+  /// ImageSizeCache
+  final ImageSizeCache? imageSizeCache;
+
   /// Creates an OctoWidget that displays an image. The [image] is an
   /// ImageProvider and the OctoImage should work with any [ImageProvider].
   /// The widget is optimized for [CachedNetworkImageProvider](https://pub.dev/packages/cached_network_image) or
@@ -202,6 +206,7 @@ class OctoImage extends StatefulWidget {
     bool? gaplessPlayback,
     int? memCacheWidth,
     int? memCacheHeight,
+    this.imageSizeCache,
   })  : image = ResizeImage.resizeIfNeeded(
           memCacheWidth,
           memCacheHeight,
@@ -269,6 +274,7 @@ class OctoImage extends StatefulWidget {
     bool? gaplessPlayback,
     int? memCacheWidth,
     int? memCacheHeight,
+    this.imageSizeCache,
   })  : image = ResizeImage.resizeIfNeeded(
           memCacheWidth,
           memCacheHeight,
@@ -322,6 +328,7 @@ class _OctoImageState extends State<OctoImage> {
       matchTextDirection: widget.matchTextDirection,
       filterQuality: widget.filterQuality,
       alwaysShowPlaceHolder: false,
+      imageSizeCache: widget.imageSizeCache,
     );
   }
 
@@ -360,6 +367,7 @@ class _OctoImageState extends State<OctoImage> {
       matchTextDirection: widget.matchTextDirection,
       filterQuality: widget.filterQuality,
       alwaysShowPlaceHolder: _previousHandler != null,
+      imageSizeCache: widget.imageSizeCache,
     );
   }
 

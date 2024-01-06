@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import '../../octo_image.dart';
 import 'fade_widget.dart';
+import 'image_size_cache.dart';
 
 enum _PlaceholderType {
   none,
@@ -132,6 +133,9 @@ class ImageHandler {
   /// was loaded in the first frame.
   bool alwaysShowPlaceHolder;
 
+  /// ImageSizeCache
+  final ImageSizeCache? imageSizeCache;
+
   ImageHandler({
     required this.image,
     required this.width,
@@ -153,6 +157,7 @@ class ImageHandler {
     required this.fadeInDuration,
     required this.fadeInCurve,
     required this.alwaysShowPlaceHolder,
+    required this.imageSizeCache,
   }) {
     _placeholderType = _definePlaceholderType();
   }
@@ -260,6 +265,18 @@ class ImageHandler {
   Widget _loadingBuilder(
       BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
     if (_isLoaded) {
+      if (imageSizeCache != null &&
+          child is Semantics &&
+          child.child != null &&
+          child.child! is RawImage) {
+        final rawImage = child.child! as RawImage;
+        if (rawImage.image != null) {
+          final img = rawImage.image!;
+          //print("image key:${image.toString()}, w:${img.width}, h:${img.height}");
+          imageSizeCache?.put(image.toString(),
+              ImageSizeCacheItem(img.width, img.height, rawImage.scale));
+        }
+      }
       return _image(context, child);
     }
 
@@ -270,6 +287,21 @@ class ImageHandler {
         curve: fadeInCurve,
       );
     } else {
+      final info = imageSizeCache?.get(image.toString());
+      if (info != null && fit != null) {
+        return Stack(
+          children: [
+            FittedBox(
+                fit: fit!,
+                child: SizedBox(
+                  width: info.width.toDouble() / info.scale,
+                  height: info.height.toDouble() / info.scale,
+                  // child: Container(color: Color(0xFFD50000),),
+                )),
+            _progressIndicator(context, loadingProgress),
+          ],
+        );
+      }
       return _progressIndicator(context, loadingProgress);
     }
   }
