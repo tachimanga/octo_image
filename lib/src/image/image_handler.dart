@@ -289,7 +289,15 @@ class ImageHandler {
     } else {
       final info = imageSizeCache?.get(image.toString());
       if (info != null && fit != null) {
+        var widget = _progressIndicator(context, loadingProgress);
+        if (widget is SizedBox && widget.child != null) {
+          final child = widget.child!;
+          if (child is Center && child.child != null) {
+            widget = child.child!;
+          }
+        }
         return Stack(
+          alignment: AlignmentDirectional.center,
           children: [
             FittedBox(
                 fit: fit!,
@@ -298,7 +306,7 @@ class ImageHandler {
                   height: info.height.toDouble() / info.scale,
                   // child: Container(color: Color(0xFFD50000),),
                 )),
-            _progressIndicator(context, loadingProgress),
+            widget,
           ],
         );
       }
